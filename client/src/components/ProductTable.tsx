@@ -1,61 +1,37 @@
-// import { useState, useMemo } from 'react';
-// import products from '../../products.json';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdDeleteForever, MdEdit } from 'react-icons/md';
-import { api } from '../services/api';
+
 import type { Product } from '../types/Product';
 
-function Table() {
-  const [rowsLimit] = useState<number>(50);
+interface TableProps {
+  products: Product[];
+  currentPage: number;
+  totalPages: number;
+  totalProductsCount: number;
+  rowsLimit: number;
+  onPageChange: (page: number) => void;
+}
+
+function Table({
+  products,
+  currentPage,
+  totalPages,
+  totalProductsCount,
+  rowsLimit,
+  onPageChange,
+}: TableProps) {
   const [customPagination, setCustomPagination] = useState<
     Array<number | null>
   >([]);
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalProductsCount, setTotalProductsCount] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
-
   useMemo(() => {
-    setCustomPagination(Array(Math.ceil(totalPages)).fill(null));
+    setCustomPagination(new Array(totalPages).fill(null));
   }, []);
-
-  const fetchProducts = async (page: number = 1) => {
-    try {
-      // setIsLoading(true);
-      setError(null);
-      const response = await api.getProducts(page, rowsLimit);
-      setProducts(response.data);
-      setTotalProductsCount(response.total);
-      setTotalPages(Math.ceil(response.total / rowsLimit));
-      setCurrentPage(page);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Ошибка при получении продуктов'
-      );
-    } finally {
-      // setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const handlePageChange = (page: number) => {
-    fetchProducts(page);
-  };
 
   return (
-    <div className="min-h-screen h-full bg-white flex flex-col items-center justify-center pt-10 pb-14">
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-      <div className="w-full max-w-4xl px-2">
+    <div className="my-10">
+      <div className="w-full max-w-4xl">
         <div className="w-full overflow-x-scroll md:overflow-auto  max-w-7xl 2xl:max-w-none text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
           <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter ">
             <thead>
@@ -119,11 +95,11 @@ function Table() {
                   </td>
                   <td className="p-4 py-5">
                     <div className="flex">
-                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 cursor-pointer">
                         <MdEdit />
                       </button>
                       <button
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
                         //   onClick={() => handleDeleteProduct(product.id)}
                       >
                         <MdDeleteForever />
@@ -135,7 +111,7 @@ function Table() {
             </tbody>
           </table>
         </div>
-        <div className="flex justify-between items-center px-4 py-3">
+        <div className="flex justify-between items-center px-1 py-3">
           <div className="text-sm text-slate-500">
             Показано {currentPage == 1 ? 1 : currentPage * rowsLimit} -{' '}
             {currentPage == totalPages
@@ -156,7 +132,7 @@ function Table() {
                     : ' bg-white text-black cursor-pointer'
                 }
     `}
-                onClick={() => handlePageChange(currentPage - 1)}
+                onClick={() => onPageChange(currentPage - 1)}
               >
                 <FaChevronLeft />
               </li>
@@ -167,7 +143,7 @@ function Table() {
                       ? 'text-blue-500  border-blue-200 hover:bg-blue-50 hover:border-blue-400 '
                       : 'text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 '
                   }`}
-                  onClick={() => handlePageChange(index + 1)}
+                  onClick={() => onPageChange(index + 1)}
                   key={index}
                 >
                   {index + 1}
@@ -179,7 +155,7 @@ function Table() {
                     ? ' bg-[#cccccc] text-slate-500 pointer-events-none'
                     : ' bg-white text-black cursor-pointer'
                 }`}
-                onClick={() => handlePageChange(currentPage + 1)}
+                onClick={() => onPageChange(currentPage + 1)}
               >
                 <FaChevronRight />
               </li>
