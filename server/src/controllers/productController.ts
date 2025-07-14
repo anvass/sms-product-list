@@ -35,3 +35,12 @@ export const createProduct = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Ошибка сервера', error: err.message });
   }
 };
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const result = await productRepository.delete(id);
+  if (result.affected === 0) {
+    return res.status(404).json({ message: 'Продукт не найден' });
+  }
+  res.status(204).send();
+};

@@ -61,6 +61,23 @@ function App() {
     setError(null);
   };
 
+  const handleDeleteProduct = async (id: number) => {
+    if (!window.confirm('Вы уверены, что хотите удалить этот товар?')) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      await api.deleteProduct(id);
+      fetchProducts(currentPage);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete product');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="p-5">
@@ -102,6 +119,7 @@ function App() {
             totalProductsCount={totalProductsCount}
             rowsLimit={rowsLimit}
             onPageChange={handlePageChange}
+            onDelete={handleDeleteProduct}
           />
         )}
       </div>

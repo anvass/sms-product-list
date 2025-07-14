@@ -34,4 +34,15 @@ export const api = {
 
     return response.json();
   },
+
+  async deleteProduct(id: number): Promise<void> {
+    const response = await fetch(`${import.meta.env.VITE_API}/products/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Ошибка при удалении продукта');
+    }
+  },
 };

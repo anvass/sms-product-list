@@ -11,6 +11,7 @@ interface TableProps {
   totalProductsCount: number;
   rowsLimit: number;
   onPageChange: (page: number) => void;
+  onDelete: (id: number) => void;
 }
 
 function Table({
@@ -20,6 +21,7 @@ function Table({
   totalProductsCount,
   rowsLimit,
   onPageChange,
+  onDelete,
 }: TableProps) {
   const [customPagination, setCustomPagination] = useState<
     Array<number | null>
@@ -100,7 +102,7 @@ function Table({
                       </button>
                       <button
                         className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                        //   onClick={() => handleDeleteProduct(product.id)}
+                        onClick={() => onDelete(product.id)}
                       >
                         <MdDeleteForever />
                       </button>
