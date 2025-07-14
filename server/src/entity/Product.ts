@@ -1,3 +1,4 @@
+import { IsNotEmpty, IsNumber, IsPositive, IsString, Min } from 'class-validator';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
@@ -9,12 +10,15 @@ export class Product {
     type: 'varchar',
     unique: true,
   })
+  @IsString()
+  @IsNotEmpty()
   article: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
   })
+  @IsString()
+  @IsNotEmpty()
   name: string;
 
   @Column({
@@ -22,12 +26,16 @@ export class Product {
     precision: 10,
     scale: 2,
   })
+  @IsNumber()
+  @IsPositive()
   price: number;
 
   @Column({
     type: 'integer',
     default: 0,
   })
+  @IsNumber()
+  @Min(0)
   quantity: number;
 
   @Column({

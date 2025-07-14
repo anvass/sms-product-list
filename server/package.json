@@ -8,6 +8,7 @@
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
+    "class-validator": "^0.14.2",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "pg": "^8.14.1",
