@@ -1,52 +1,60 @@
-import { useState, useMemo } from 'react';
-import products from '../../products.json';
+// import { useState, useMemo } from 'react';
+// import products from '../../products.json';
+import { useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdDeleteForever, MdEdit } from 'react-icons/md';
+import { api } from '../services/api';
+import type { Product } from '../types/Product';
 
 function Table() {
-  const [productList] = useState(products);
-  const [rowsLimit] = useState(10);
-  const [rowsToShow, setRowsToShow] = useState(productList.slice(0, rowsLimit));
-  const [customPagination, setCustomPagination] = useState([]);
-  const [totalPage] = useState(Math.ceil(productList?.length / rowsLimit));
-  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsLimit] = useState<number>(50);
+  const [customPagination, setCustomPagination] = useState<
+    Array<number | null>
+  >([]);
 
-  const nextPage = () => {
-    const startIndex = rowsLimit * (currentPage + 1);
-    const endIndex = startIndex + rowsLimit;
-    const newArray = products.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(currentPage + 1);
-  };
+  const [products, setProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalProductsCount, setTotalProductsCount] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const changePage = (value) => {
-    const startIndex = value * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = products.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(value);
-  };
+  useMemo(() => {
+    setCustomPagination(Array(Math.ceil(totalPages)).fill(null));
+  }, []);
 
-  const previousPage = () => {
-    const startIndex = (currentPage - 1) * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = products.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    } else {
-      setCurrentPage(0);
+  const fetchProducts = async (page: number = 1) => {
+    try {
+      // setIsLoading(true);
+      setError(null);
+      const response = await api.getProducts(page, rowsLimit);
+      setProducts(response.data);
+      setTotalProductsCount(response.total);
+      setTotalPages(Math.ceil(response.total / rowsLimit));
+      setCurrentPage(page);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Ошибка при получении продуктов'
+      );
+    } finally {
+      // setIsLoading(false);
     }
   };
 
-  useMemo(() => {
-    setCustomPagination(
-      Array(Math.ceil(productList?.length / rowsLimit)).fill(null)
-    );
+  useEffect(() => {
+    fetchProducts();
   }, []);
 
+  const handlePageChange = (page: number) => {
+    fetchProducts(page);
+  };
+
   return (
-    <div className="min-h-screen h-full bg-white flex  items-center justify-center pt-10 pb-14">
+    <div className="min-h-screen h-full bg-white flex flex-col items-center justify-center pt-10 pb-14">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
       <div className="w-full max-w-4xl px-2">
         <div className="w-full overflow-x-scroll md:overflow-auto  max-w-7xl 2xl:max-w-none text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
           <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter ">
@@ -85,39 +93,38 @@ function Table() {
               </tr>
             </thead>
             <tbody>
-              {rowsToShow?.map((data, index) => (
+              {products?.map((product, index) => (
                 <tr
                   className="hover:bg-slate-50 border-b border-slate-200"
                   key={index}
                 >
                   <td className="p-4 py-5">
                     <p className="block font-semibold text-sm text-slate-800">
-                      {data?.id}
+                      {product?.id}
                     </p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{data?.name}</p>
+                    <p className="text-sm text-slate-500">{product?.name}</p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{data?.article}</p>
+                    <p className="text-sm text-slate-500">{product?.article}</p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{data?.price}</p>
+                    <p className="text-sm text-slate-500">{product?.price}</p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{data?.quantity}</p>
+                    <p className="text-sm text-slate-500">
+                      {product?.quantity}
+                    </p>
                   </td>
                   <td className="p-4 py-5">
                     <div className="flex">
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                        //   onClick={() => onDelete(product.id)}
-                      >
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
                         <MdEdit />
                       </button>
                       <button
                         className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                        //   onClick={() => onEdit(product.id)}
+                        //   onClick={() => handleDeleteProduct(product.id)}
                       >
                         <MdDeleteForever />
                       </button>
@@ -130,11 +137,11 @@ function Table() {
         </div>
         <div className="flex justify-between items-center px-4 py-3">
           <div className="text-sm text-slate-500">
-            Показано {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} -{' '}
-            {currentPage == totalPage - 1
-              ? productList?.length
-              : (currentPage + 1) * rowsLimit}{' '}
-            из {productList?.length}
+            Показано {currentPage == 1 ? 1 : currentPage * rowsLimit} -{' '}
+            {currentPage == totalPages
+              ? totalProductsCount
+              : currentPage * rowsLimit}{' '}
+            из {totalProductsCount}
           </div>
           <div className="flex">
             <ul
@@ -144,23 +151,23 @@ function Table() {
             >
               <li
                 className={` prev-btn flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal border rounded  border-slate-200 hover:bg-slate-50 hover:border-slate-400 ${
-                  currentPage == 0
+                  currentPage == 1
                     ? ' bg-[#cccccc] text-slate-500 pointer-events-none'
                     : ' bg-white text-black cursor-pointer'
                 }
     `}
-                onClick={previousPage}
+                onClick={() => handlePageChange(currentPage - 1)}
               >
                 <FaChevronLeft />
               </li>
               {customPagination?.map((data, index) => (
                 <li
                   className={`flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal bg-white border rounded cursor-pointer ${
-                    currentPage == index
+                    currentPage == index + 1
                       ? 'text-blue-500  border-blue-200 hover:bg-blue-50 hover:border-blue-400 '
                       : 'text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 '
                   }`}
-                  onClick={() => changePage(index)}
+                  onClick={() => handlePageChange(index + 1)}
                   key={index}
                 >
                   {index + 1}
@@ -168,11 +175,11 @@ function Table() {
               ))}
               <li
                 className={`flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal border rounded  border-slate-200 hover:bg-slate-50 hover:border-slate-400 ${
-                  currentPage == totalPage - 1
+                  currentPage == totalPages
                     ? ' bg-[#cccccc] text-slate-500 pointer-events-none'
                     : ' bg-white text-black cursor-pointer'
                 }`}
-                onClick={nextPage}
+                onClick={() => handlePageChange(currentPage + 1)}
               >
                 <FaChevronRight />
               </li>
