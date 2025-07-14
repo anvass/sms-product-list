@@ -12,13 +12,6 @@ export interface ProductsResponse {
   total: number;
 }
 
-export interface CreateProductRequest {
-  article: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
 export interface ProductFormData {
   article: string;
   name: string;

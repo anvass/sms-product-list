@@ -40,7 +40,31 @@ export const deleteProduct = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const result = await productRepository.delete(id);
   if (result.affected === 0) {
-    return res.status(404).json({ message: 'Продукт не найден' });
+    return res.status(404).json({ message: 'Товар не найден' });
   }
   res.status(204).send();
+};
+
+export const updateProduct = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const product = await productRepository.findOneBy({ id });
+  if (!product) {
+    return res.status(404).json({ message: 'Товар не найден' });
+  }
+  productRepository.merge(product, req.body);
+  const errors = await validate(product);
+  if (errors.length > 0) {
+    return res.status(400).json(errors);
+  }
+  try {
+    await productRepository.save(product);
+    res.json(product);
+  } catch (err: any) {
+    if (err.code === '23505') {
+      return res
+        .status(400)
+        .json({ message: 'Артикул должен быть уникальным' });
+    }
+    res.status(500).json({ message: 'Ошибка сервера', error: err.message });
+  }
 };

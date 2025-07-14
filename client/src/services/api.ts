@@ -1,6 +1,6 @@
 import type {
-  CreateProductRequest,
   Product,
+  ProductFormData,
   ProductsResponse,
 } from '../types/Product';
 
@@ -13,12 +13,12 @@ export const api = {
       `${import.meta.env.VITE_API}/products?page=${page}&limit=${limit}`
     );
     if (!response.ok) {
-      throw new Error('Ошибка при загрузке продуктов');
+      throw new Error('Ошибка при загрузке товаров');
     }
     return response.json();
   },
 
-  async createProduct(product: CreateProductRequest): Promise<Product> {
+  async createProduct(product: ProductFormData): Promise<Product> {
     const response = await fetch(`${import.meta.env.VITE_API}/products`, {
       method: 'POST',
       headers: {
@@ -29,7 +29,7 @@ export const api = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Ошибка при создании продукта');
+      throw new Error(error.message || 'Ошибка при создании товара');
     }
 
     return response.json();
@@ -42,7 +42,24 @@ export const api = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Ошибка при удалении продукта');
+      throw new Error(error.message || 'Ошибка при удалении товара');
     }
+  },
+
+  async updateProduct(id: number, product: ProductFormData): Promise<Product> {
+    const response = await fetch(`${import.meta.env.VITE_API}/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Ошибка при обновлении товара');
+    }
+
+    return response.json();
   },
 };

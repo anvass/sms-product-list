@@ -12,6 +12,7 @@ interface TableProps {
   rowsLimit: number;
   onPageChange: (page: number) => void;
   onDelete: (id: number) => void;
+  onEdit: (product: Product) => void;
 }
 
 function Table({
@@ -22,6 +23,7 @@ function Table({
   rowsLimit,
   onPageChange,
   onDelete,
+  onEdit,
 }: TableProps) {
   const [customPagination, setCustomPagination] = useState<
     Array<number | null>
@@ -97,7 +99,10 @@ function Table({
                   </td>
                   <td className="p-4 py-5">
                     <div className="flex">
-                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 cursor-pointer">
+                      <button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 cursor-pointer"
+                        onClick={() => onEdit(product)}
+                      >
                         <MdEdit />
                       </button>
                       <button

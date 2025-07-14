@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Table from './components/ProductTable';
-import type { CreateProductRequest, Product } from './types/Product';
+import type { Product, ProductFormData } from './types/Product';
 import { api } from './services/api';
 import ProductForm from './components/ProductForm';
 
@@ -26,7 +26,7 @@ function App() {
       setCurrentPage(page);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Ошибка при получении продуктов'
+        err instanceof Error ? err.message : 'Ошибка при получении товаров'
       );
     } finally {
       setIsLoading(false);
@@ -41,7 +41,7 @@ function App() {
     fetchProducts(page);
   };
 
-  const handleCreateProduct = async (productData: CreateProductRequest) => {
+  const handleCreateProduct = async (productData: ProductFormData) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -78,6 +78,28 @@ function App() {
     }
   };
 
+  const handleUpdateProduct = async (productData: ProductFormData) => {
+    if (!editingProduct) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      await api.updateProduct(editingProduct.id, productData);
+      setShowForm(false);
+      setEditingProduct(null);
+      fetchProducts(currentPage);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update product');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setShowForm(true);
+  };
+
   return (
     <>
       <div className="p-5">
@@ -100,17 +122,14 @@ function App() {
         )}
 
         {showForm ? (
-          <div className="mb-8">
-            <ProductForm
-              product={editingProduct}
-              onSubmit={
-                // editingProduct ? handleUpdateProduct : handleCreateProduct
-                handleCreateProduct
-              }
-              onCancel={handleCancelForm}
-              isLoading={isLoading}
-            />
-          </div>
+          <ProductForm
+            product={editingProduct}
+            onSubmit={
+              editingProduct ? handleUpdateProduct : handleCreateProduct
+            }
+            onCancel={handleCancelForm}
+            isLoading={isLoading}
+          />
         ) : (
           <Table
             products={products}
@@ -120,6 +139,7 @@ function App() {
             rowsLimit={rowsLimit}
             onPageChange={handlePageChange}
             onDelete={handleDeleteProduct}
+            onEdit={handleEditProduct}
           />
         )}
       </div>
