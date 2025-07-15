@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdDeleteForever, MdEdit } from 'react-icons/md';
 
@@ -15,7 +15,7 @@ interface TableProps {
   onEdit: (product: Product) => void;
 }
 
-function Table({
+function ProductTable({
   products,
   currentPage,
   totalPages,
@@ -31,7 +31,7 @@ function Table({
 
   useMemo(() => {
     setCustomPagination(new Array(totalPages).fill(null));
-  }, []);
+  }, [totalPages]);
 
   return (
     <div className="my-10">
@@ -80,22 +80,20 @@ function Table({
                 >
                   <td className="p-4 py-5">
                     <p className="block font-semibold text-sm text-slate-800">
-                      {product?.id}
+                      {product.id}
                     </p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{product?.name}</p>
+                    <p className="text-sm text-slate-500">{product.name}</p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{product?.article}</p>
+                    <p className="text-sm text-slate-500">{product.article}</p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">{product?.price}</p>
+                    <p className="text-sm text-slate-500">{product.price}</p>
                   </td>
                   <td className="p-4 py-5">
-                    <p className="text-sm text-slate-500">
-                      {product?.quantity}
-                    </p>
+                    <p className="text-sm text-slate-500">{product.quantity}</p>
                   </td>
                   <td className="p-4 py-5">
                     <div className="flex">
@@ -174,4 +172,4 @@ function Table({
   );
 }
 
-export default Table;
+export default ProductTable;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Table from './components/ProductTable';
+import ProductTable from './components/ProductTable';
 import type { Product, ProductFormData } from './types/Product';
 import { api } from './services/api';
 import ProductForm from './components/ProductForm';
@@ -131,7 +131,7 @@ function App() {
             isLoading={isLoading}
           />
         ) : (
-          <Table
+          <ProductTable
             products={products}
             currentPage={currentPage}
             totalPages={totalPages}
