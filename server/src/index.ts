@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
-
 import 'reflect-metadata';
 import * as express from 'express';
 import { AppDataSource } from './data-source';
