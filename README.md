@@ -4,6 +4,11 @@
 
 <img src="./docs/assets/preview.png" alt="Preview" width="640"/>
 
+## Как запустить
+
+[Сервер](https://github.com/anvass/sms-product-list/blob/main/server/README.md)<br>
+[Клиент](https://github.com/anvass/sms-product-list/blob/main/client/README.md)
+
 ## Технологии
 
 Frontend:<br>
