@@ -16,10 +16,7 @@ function ProductForm({
 }: ProductFormProps) {
   const form = useForm<ProductFormData>({
     defaultValues: {
-      name: '',
-      article: '',
-      price: 0,
-      quantity: 0,
+      ...product,
     },
   });
 
@@ -32,6 +29,10 @@ function ProductForm({
   return (
     <div className="my-10">
       <div className="w-full max-w-4xl">
+        <h2 className="text-xl font-bold text-gray-900">
+          {product ? 'Обновление товара' : 'Добавление товара'}
+        </h2>
+
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-5 p-5 bg-white rounded-lg shadow-md"
