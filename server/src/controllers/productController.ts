@@ -28,9 +28,7 @@ export const createProduct = async (req: Request, res: Response) => {
     res.status(201).json(product);
   } catch (err: any) {
     if (err.code === '23505') {
-      return res
-        .status(400)
-        .json({ message: 'Артикул должен быть уникальным' });
+      return res.status(400).json({ message: 'Такой артикул уже есть' });
     }
     res.status(500).json({ message: 'Ошибка сервера', error: err.message });
   }
@@ -61,9 +59,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     res.json(product);
   } catch (err: any) {
     if (err.code === '23505') {
-      return res
-        .status(400)
-        .json({ message: 'Артикул должен быть уникальным' });
+      return res.status(400).json({ message: 'Такой артикул уже есть' });
     }
     res.status(500).json({ message: 'Ошибка сервера', error: err.message });
   }
