@@ -1,8 +1,7 @@
-import { useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdDeleteForever, MdEdit } from 'react-icons/md';
 
-import type { Product } from '../types/Product';
+import type { Product } from '../types';
 import { LuRussianRuble } from 'react-icons/lu';
 
 interface TableProps {
@@ -26,13 +25,47 @@ function ProductTable({
   onDelete,
   onEdit,
 }: TableProps) {
-  const [customPagination, setCustomPagination] = useState<
-    Array<number | null>
-  >([]);
+  function getPageNumbers(currentPage: number, totalPages: number) {
+    const maxVisiblePages = 3;
 
-  useMemo(() => {
-    setCustomPagination(new Array(totalPages).fill(null));
-  }, [totalPages]);
+    if (totalPages <= maxVisiblePages) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const halfBound = Math.floor(maxVisiblePages / 2);
+    let startBound = currentPage - halfBound;
+    let endBound = currentPage + halfBound;
+
+    if (startBound < 1) {
+      startBound = 1;
+      endBound = maxVisiblePages;
+    } else if (endBound > totalPages) {
+      endBound = totalPages;
+      startBound = totalPages - maxVisiblePages + 1;
+    }
+
+    const paginationArray = [];
+
+    if (startBound > 1) {
+      paginationArray.push('1');
+      if (startBound > 2) {
+        paginationArray.push('...');
+      }
+    }
+
+    for (let i = startBound; i <= endBound; i++) {
+      paginationArray.push(String(i));
+    }
+
+    if (endBound < totalPages) {
+      if (endBound < totalPages - 1) {
+        paginationArray.push('...');
+      }
+      paginationArray.push(String(totalPages));
+    }
+
+    return paginationArray;
+  }
 
   return (
     <div className="my-10 w-full max-w-4xl">
@@ -116,9 +149,10 @@ function ProductTable({
           </tbody>
         </table>
       </div>
-      <div className="flex justify-between items-center px-1 py-3">
-        <div className="text-sm text-slate-500">
-          Показано {currentPage == 1 ? 1 : currentPage * rowsLimit} -{' '}
+      <div className="flex flex-col md:flex-row justify-between items-center px-1 py-3">
+        <div className="text-sm text-slate-500 mb-5 md:mb-0">
+          Показано{' '}
+          {currentPage == 1 ? 1 : currentPage * rowsLimit - rowsLimit + 1} -{' '}
           {currentPage == totalPages
             ? totalProductsCount
             : currentPage * rowsLimit}{' '}
@@ -133,7 +167,7 @@ function ProductTable({
             <li
               className={` prev-btn flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal border rounded  border-slate-200 hover:bg-slate-50 hover:border-slate-400 ${
                 currentPage == 1
-                  ? ' bg-[#cccccc] text-slate-500 pointer-events-none'
+                  ? ' bg-slate-200 text-slate-500 pointer-events-none'
                   : ' bg-white text-black cursor-pointer'
               }
     `}
@@ -141,23 +175,28 @@ function ProductTable({
             >
               <FaChevronLeft />
             </li>
-            {customPagination?.map((data, index) => (
+
+            {getPageNumbers(currentPage, totalPages).map((data, index) => (
               <li
-                className={`flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal bg-white border rounded cursor-pointer ${
-                  currentPage == index + 1
-                    ? 'text-blue-500  border-blue-200 hover:bg-blue-50 hover:border-blue-400 '
-                    : 'text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 '
+                className={`flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal  border rounded ${
+                  data == '...'
+                    ? 'border-slate-200 bg-slate-200 text-slate-500 pointer-events-none '
+                    : currentPage == data
+                    ? 'text-blue-500  border-blue-200 hover:bg-blue-50 hover:border-blue-400 cursor-pointer  '
+                    : 'text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 cursor-pointer  '
                 }`}
-                onClick={() => onPageChange(index + 1)}
+                onClick={
+                  data !== '...' ? () => onPageChange(Number(data)) : undefined
+                }
                 key={index}
               >
-                {index + 1}
+                {data}
               </li>
             ))}
             <li
               className={`flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal border rounded  border-slate-200 hover:bg-slate-50 hover:border-slate-400 ${
                 currentPage == totalPages
-                  ? ' bg-[#cccccc] text-slate-500 pointer-events-none'
+                  ? ' bg-slate-200 text-slate-500 pointer-events-none'
                   : ' bg-white text-black cursor-pointer'
               }`}
               onClick={() => onPageChange(currentPage + 1)}

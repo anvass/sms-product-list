@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import type { Product, ProductFormData } from '../types/Product';
+import type { Product, ProductFormData } from '../types';
 
 interface ProductFormProps {
   product?: Product | null;

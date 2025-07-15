@@ -1,8 +1,4 @@
-import type {
-  Product,
-  ProductFormData,
-  ProductsResponse,
-} from '../types/Product';
+import type { Product, ProductFormData, ProductsResponse } from '../types';
 
 export const api = {
   async getProducts(

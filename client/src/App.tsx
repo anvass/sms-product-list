@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import ProductTable from './components/ProductTable';
-import type { Product, ProductFormData } from './types/Product';
+import type { Product, ProductFormData } from './types';
 import { api } from './services/api';
 import ProductForm from './components/ProductForm';
+import { ROWS_LIMIT } from './constants';
 
 function App() {
-  const [rowsLimit] = useState<number>(50);
+  const [rowsLimit] = useState<number>(ROWS_LIMIT);
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
