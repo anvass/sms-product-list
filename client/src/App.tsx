@@ -102,8 +102,8 @@ function App() {
 
   return (
     <>
-      <div className="p-5">
-        <h1 className="text-2xl font-bold text-gray-900">
+      <div className="p-5 flex flex-col items-center">
+        <h1 className="text-2xl font-bold text-gray-900 text-center">
           Управление товарами
         </h1>
         <div className="flex justify-between items-center my-10">
@@ -114,12 +114,6 @@ function App() {
             Добавить товар
           </button>
         </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
 
         {showForm ? (
           <ProductForm
@@ -141,6 +135,12 @@ function App() {
             onDelete={handleDeleteProduct}
             onEdit={handleEditProduct}
           />
+        )}
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded my-1">
+            {error}
+          </div>
         )}
       </div>
     </>
