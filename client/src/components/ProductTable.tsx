@@ -3,6 +3,7 @@ import { MdDeleteForever, MdEdit } from 'react-icons/md';
 
 import type { Product } from '../types';
 import { LuRussianRuble } from 'react-icons/lu';
+import { createPages } from '../lib/pagination';
 
 interface ProductTableProps {
   products: Product[];
@@ -13,48 +14,6 @@ interface ProductTableProps {
   onPageChange: (page: number) => void;
   onDelete: (id: number) => void;
   onEdit: (product: Product) => void;
-}
-
-function getPageNumbers(currentPage: number, totalPages: number) {
-  const maxVisiblePages = 3;
-
-  if (totalPages <= maxVisiblePages) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
-  const halfBound = Math.floor(maxVisiblePages / 2);
-  let startBound = currentPage - halfBound;
-  let endBound = currentPage + halfBound;
-
-  if (startBound < 1) {
-    startBound = 1;
-    endBound = maxVisiblePages;
-  } else if (endBound > totalPages) {
-    endBound = totalPages;
-    startBound = totalPages - maxVisiblePages + 1;
-  }
-
-  const paginationArray = [];
-
-  if (startBound > 1) {
-    paginationArray.push('1');
-    if (startBound > 2) {
-      paginationArray.push('...');
-    }
-  }
-
-  for (let i = startBound; i <= endBound; i++) {
-    paginationArray.push(String(i));
-  }
-
-  if (endBound < totalPages) {
-    if (endBound < totalPages - 1) {
-      paginationArray.push('...');
-    }
-    paginationArray.push(String(totalPages));
-  }
-
-  return paginationArray;
 }
 
 function ProductTable({
@@ -180,7 +139,7 @@ function ProductTable({
               <FaChevronLeft />
             </li>
 
-            {getPageNumbers(currentPage, totalPages).map((data, index) => (
+            {createPages(currentPage, totalPages).map((data, index) => (
               <li
                 className={`flex items-center justify-center px-3 py-1 min-w-9 min-h-9 text-sm font-normal  border rounded ${
                   data == '...'
