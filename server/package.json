@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "watch": "nodemon --watch src --ext ts --exec ts-node src/index.ts"
+    "watch": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "class-validator": "^0.14.2",
