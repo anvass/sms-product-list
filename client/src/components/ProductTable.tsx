@@ -4,7 +4,7 @@ import { MdDeleteForever, MdEdit } from 'react-icons/md';
 import type { Product } from '../types';
 import { LuRussianRuble } from 'react-icons/lu';
 
-interface TableProps {
+interface ProductTableProps {
   products: Product[];
   currentPage: number;
   totalPages: number;
@@ -24,7 +24,7 @@ function ProductTable({
   onPageChange,
   onDelete,
   onEdit,
-}: TableProps) {
+}: ProductTableProps) {
   function getPageNumbers(currentPage: number, totalPages: number) {
     const maxVisiblePages = 3;
 
@@ -152,11 +152,16 @@ function ProductTable({
       <div className="flex flex-col md:flex-row justify-between items-center px-1 py-3">
         <div className="text-sm text-slate-500 mb-5 md:mb-0">
           Показано{' '}
-          {currentPage == 1 ? 1 : currentPage * rowsLimit - rowsLimit + 1} -{' '}
-          {currentPage == totalPages
-            ? totalProductsCount
-            : currentPage * rowsLimit}{' '}
-          из {totalProductsCount}
+          {totalProductsCount == 0
+            ? '0 - 0 из 0'
+            : `${
+                currentPage == 1 ? 1 : currentPage * rowsLimit - rowsLimit + 1
+              } - ${
+                currentPage == totalPages
+                  ? totalProductsCount
+                  : currentPage * rowsLimit
+              }
+            из ${totalProductsCount}`}
         </div>
         <div className="flex">
           <ul
