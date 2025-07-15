@@ -4,7 +4,7 @@ import type { Product, ProductFormData } from './types';
 import { api } from './services/api';
 import ProductForm from './components/ProductForm';
 
-const ROWS_LIMIT = 2;
+const ROWS_LIMIT = 50;
 
 function App() {
   const [rowsLimit] = useState<number>(ROWS_LIMIT);
@@ -76,7 +76,9 @@ function App() {
       const newCurrentPage = Math.min(currentPage, newTotalPages);
       fetchProducts(newCurrentPage);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка при удалении товара');
+      setError(
+        err instanceof Error ? err.message : 'Ошибка при удалении товара'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +95,9 @@ function App() {
       setEditingProduct(null);
       fetchProducts(currentPage);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка при обновлении продукта');
+      setError(
+        err instanceof Error ? err.message : 'Ошибка при обновлении продукта'
+      );
     } finally {
       setIsLoading(false);
     }
