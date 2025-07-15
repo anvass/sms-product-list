@@ -40,7 +40,8 @@ export const deleteProduct = async (req: Request, res: Response) => {
   if (result.affected === 0) {
     return res.status(404).json({ message: 'Товар не найден' });
   }
-  res.status(204).send();
+  const total = await productRepository.count();
+  res.json({ total });
 };
 
 export const updateProduct = async (req: Request, res: Response) => {

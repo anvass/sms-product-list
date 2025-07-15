@@ -7,14 +7,18 @@ export interface Product {
   createdAt: string;
 }
 
-export interface ProductsResponse {
-  data: Product[];
-  total: number;
-}
-
 export interface ProductFormData {
   article: string;
   name: string;
   price: number;
   quantity: number;
+}
+
+export interface ProductsResponse {
+  data: Product[];
+  total: number;
+}
+
+export interface ProductDeleteResponse {
+  total: number;
 }

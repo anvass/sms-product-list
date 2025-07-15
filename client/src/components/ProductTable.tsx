@@ -15,6 +15,48 @@ interface ProductTableProps {
   onEdit: (product: Product) => void;
 }
 
+function getPageNumbers(currentPage: number, totalPages: number) {
+  const maxVisiblePages = 3;
+
+  if (totalPages <= maxVisiblePages) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const halfBound = Math.floor(maxVisiblePages / 2);
+  let startBound = currentPage - halfBound;
+  let endBound = currentPage + halfBound;
+
+  if (startBound < 1) {
+    startBound = 1;
+    endBound = maxVisiblePages;
+  } else if (endBound > totalPages) {
+    endBound = totalPages;
+    startBound = totalPages - maxVisiblePages + 1;
+  }
+
+  const paginationArray = [];
+
+  if (startBound > 1) {
+    paginationArray.push('1');
+    if (startBound > 2) {
+      paginationArray.push('...');
+    }
+  }
+
+  for (let i = startBound; i <= endBound; i++) {
+    paginationArray.push(String(i));
+  }
+
+  if (endBound < totalPages) {
+    if (endBound < totalPages - 1) {
+      paginationArray.push('...');
+    }
+    paginationArray.push(String(totalPages));
+  }
+
+  return paginationArray;
+}
+
 function ProductTable({
   products,
   currentPage,
@@ -25,48 +67,6 @@ function ProductTable({
   onDelete,
   onEdit,
 }: ProductTableProps) {
-  function getPageNumbers(currentPage: number, totalPages: number) {
-    const maxVisiblePages = 3;
-
-    if (totalPages <= maxVisiblePages) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    const halfBound = Math.floor(maxVisiblePages / 2);
-    let startBound = currentPage - halfBound;
-    let endBound = currentPage + halfBound;
-
-    if (startBound < 1) {
-      startBound = 1;
-      endBound = maxVisiblePages;
-    } else if (endBound > totalPages) {
-      endBound = totalPages;
-      startBound = totalPages - maxVisiblePages + 1;
-    }
-
-    const paginationArray = [];
-
-    if (startBound > 1) {
-      paginationArray.push('1');
-      if (startBound > 2) {
-        paginationArray.push('...');
-      }
-    }
-
-    for (let i = startBound; i <= endBound; i++) {
-      paginationArray.push(String(i));
-    }
-
-    if (endBound < totalPages) {
-      if (endBound < totalPages - 1) {
-        paginationArray.push('...');
-      }
-      paginationArray.push(String(totalPages));
-    }
-
-    return paginationArray;
-  }
-
   return (
     <div className="my-10 w-full max-w-4xl">
       <div className="w-full overflow-x-scroll md:overflow-auto  max-w-7xl 2xl:max-w-none text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
@@ -153,15 +153,14 @@ function ProductTable({
         <div className="text-sm text-slate-500 mb-5 md:mb-0">
           Показано{' '}
           {totalProductsCount == 0
-            ? '0 - 0 из 0'
-            : `${
+            ? '0'
+            : `с ${
                 currentPage == 1 ? 1 : currentPage * rowsLimit - rowsLimit + 1
-              } - ${
+              } по ${
                 currentPage == totalPages
                   ? totalProductsCount
                   : currentPage * rowsLimit
-              }
-            из ${totalProductsCount}`}
+              }, всего: ${totalProductsCount}`}
         </div>
         <div className="flex">
           <ul

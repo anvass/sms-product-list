@@ -3,7 +3,8 @@ import ProductTable from './components/ProductTable';
 import type { Product, ProductFormData } from './types';
 import { api } from './services/api';
 import ProductForm from './components/ProductForm';
-import { ROWS_LIMIT } from './constants';
+
+const ROWS_LIMIT = 2;
 
 function App() {
   const [rowsLimit] = useState<number>(ROWS_LIMIT);
@@ -48,7 +49,7 @@ function App() {
       setError(null);
       await api.createProduct(productData);
       setShowForm(false);
-      fetchProducts(1);
+      fetchProducts();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create product');
     } finally {
@@ -70,11 +71,12 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      await api.deleteProduct(id);
-      // fetchProducts(currentPage);
-      fetchProducts(1);
+      const response = await api.deleteProduct(id);
+      const newTotalPages = Math.ceil(response.total / rowsLimit);
+      const newCurrentPage = Math.min(currentPage, newTotalPages);
+      fetchProducts(newCurrentPage);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete product');
+      setError(err instanceof Error ? err.message : 'Ошибка при удалении товара');
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +93,7 @@ function App() {
       setEditingProduct(null);
       fetchProducts(currentPage);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update product');
+      setError(err instanceof Error ? err.message : 'Ошибка при обновлении продукта');
     } finally {
       setIsLoading(false);
     }

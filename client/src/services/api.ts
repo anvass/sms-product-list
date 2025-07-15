@@ -1,4 +1,9 @@
-import type { Product, ProductFormData, ProductsResponse } from '../types';
+import type {
+  Product,
+  ProductFormData,
+  ProductsResponse,
+  ProductDeleteResponse,
+} from '../types';
 
 export const api = {
   async getProducts(
@@ -31,7 +36,7 @@ export const api = {
     return response.json();
   },
 
-  async deleteProduct(id: number): Promise<void> {
+  async deleteProduct(id: number): Promise<ProductDeleteResponse> {
     const response = await fetch(`${import.meta.env.VITE_API}/products/${id}`, {
       method: 'DELETE',
     });
@@ -40,6 +45,8 @@ export const api = {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка при удалении товара');
     }
+
+    return response.json();
   },
 
   async updateProduct(id: number, product: ProductFormData): Promise<Product> {
