@@ -71,7 +71,8 @@ function App() {
       setIsLoading(true);
       setError(null);
       await api.deleteProduct(id);
-      fetchProducts(currentPage);
+      // fetchProducts(currentPage);
+      fetchProducts(1);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete product');
     } finally {
