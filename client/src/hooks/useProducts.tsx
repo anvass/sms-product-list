@@ -106,23 +106,23 @@ function useProducts() {
     setEditingProduct(product);
     setShowForm(true);
   };
-  
+
   return {
-    setShowForm,
     showForm,
+    setShowForm,
     editingProduct,
     handleUpdateProduct,
     handleCreateProduct,
     handleCancelForm,
+    handlePageChange,
+    handleDeleteProduct,
+    handleEditProduct,
     isLoading,
     products,
     currentPage,
     totalPages,
     totalProductsCount,
     rowsLimit,
-    handlePageChange,
-    handleDeleteProduct,
-    handleEditProduct,
     error,
   };
 }
