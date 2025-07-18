@@ -13,8 +13,3 @@
    ```bash
    npm run dev
    ```
-
-3. Сборка проекта (production):
-   ```bash
-   npm run build
-   ```

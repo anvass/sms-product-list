@@ -6,9 +6,23 @@
 
 ## Как запустить
 
-[Сервер](https://github.com/anvass/sms-product-list/blob/main/server/README.md)
+```
+make up
+```
 
-[Клиент](https://github.com/anvass/sms-product-list/blob/main/client/README.md)
+После этого клиент будет доступен на http://localhost:3000, а сервер будет доступен на http://localhost:3100
+
+## Как остановить
+
+```
+make down
+```
+
+## Разработка
+
+[Сервер](./server/README.md)
+
+[Клиент](./client/README.md)
 
 ## Технологии
 
